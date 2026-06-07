@@ -37,4 +37,17 @@ export interface Alert {
   triggered: boolean
 }
 
+export interface Holding {
+  coinId: string
+  amount: number
+}
+
+export interface Allocation {
+  coinId: string
+  symbol: string
+  value: number
+  pct: number
+  color: string
+}
+
 export type TimeRange = '1' | '7' | '30' | '365'

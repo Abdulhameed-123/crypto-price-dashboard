@@ -4,9 +4,21 @@ interface HeaderProps {
   isLoading: boolean
   isStale: boolean
   onRefresh: () => void
+  portfolioValue: number
+  portfolioPnl: number
+  portfolioPnlPercent: number
 }
 
-export function Header({ alertCount, lastUpdated, isLoading, isStale, onRefresh }: HeaderProps) {
+function formatCompact(n: number): string {
+  if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(2)}B`
+  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(2)}M`
+  if (n >= 1_000) return `$${(n / 1_000).toFixed(1)}K`
+  return `$${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+}
+
+export function Header({ alertCount, lastUpdated, isLoading, isStale, onRefresh, portfolioValue, portfolioPnl, portfolioPnlPercent }: HeaderProps) {
+  const isPnlUp = portfolioPnl >= 0
+
   return (
     <header className="flex items-center justify-between px-6 py-4 border-b border-crypto-border">
       <div className="flex items-center gap-3">
@@ -18,6 +30,16 @@ export function Header({ alertCount, lastUpdated, isLoading, isStale, onRefresh 
       </div>
 
       <div className="flex items-center gap-4 text-sm text-crypto-text-muted">
+        {portfolioValue > 0 && (
+          <span className="flex items-center gap-2 px-3 py-1.5 bg-crypto-surface rounded-lg">
+            <span className="text-xs text-crypto-text-muted">Portfolio</span>
+            <span className="text-sm font-semibold text-white">{formatCompact(portfolioValue)}</span>
+            <span className={`text-xs font-medium ${isPnlUp ? 'text-crypto-green' : 'text-crypto-red'}`}>
+              {isPnlUp ? '▲' : '▼'} {isPnlUp ? '+' : ''}{portfolioPnlPercent.toFixed(2)}%
+            </span>
+          </span>
+        )}
+
         {isLoading ? (
           <span className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-crypto-accent animate-pulse" />
