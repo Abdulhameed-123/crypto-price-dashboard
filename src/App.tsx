@@ -90,6 +90,7 @@ function App() {
   const handleSearchSelect = useCallback(
     (id: string, symbol: string, name: string) => {
       addCustom({ id, symbol, name })
+      setSelectedId(id)
     },
     [addCustom]
   )
