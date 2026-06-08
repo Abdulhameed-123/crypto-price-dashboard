@@ -45,11 +45,10 @@ function App() {
   const [alertCoinId, setAlertCoinId] = useState<string | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
-  const [chartType, setChartType] = useState<ChartType>('line')
+  const [chartType, setChartType] = useState<ChartType>('candle')
   const { chartData, candleData, loading: chartLoading, error: chartError } = useChartData(selectedId, days, chartType)
   const handleDaysChange = useCallback((d: TimeRange) => {
     setDays(d)
-    if (d !== '1' && d !== 'max') setChartType('line')
   }, [])
 
   const selectedCoin = useMemo(
