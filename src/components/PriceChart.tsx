@@ -280,12 +280,12 @@ function PriceChartInner({ data, candleData, loading, error, days, chartType, on
             </span>
           </div>
         )}
-        <div className="flex gap-1 overflow-x-auto -mx-1 px-1 pb-1 scrollbar-none">
+        <div className="flex gap-0.5 sm:gap-1 overflow-x-auto -mx-2 px-2 pb-0.5 sm:pb-1">
           {TIME_RANGES.map((tr) => (
             <button
               key={tr.value}
               onClick={() => onDaysChange(tr.value)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
+              className={`px-2 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 ${
                 days === tr.value
                   ? 'bg-crypto-accent text-white shadow-sm'
                   : 'bg-crypto-bg text-crypto-text-muted hover:text-white hover:bg-crypto-border'
