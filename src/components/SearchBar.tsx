@@ -67,7 +67,7 @@ export function SearchBar({ onSelect, addedIds }: SearchBarProps) {
   }
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-xs">
+    <div ref={containerRef} className="relative w-full sm:max-w-xs">
       <div className="relative">
         <svg
           className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-crypto-text-muted pointer-events-none"

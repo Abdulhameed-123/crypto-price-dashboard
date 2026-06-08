@@ -48,20 +48,21 @@ export function usePrices(coinMetas: CoinMeta[]) {
 
       const enriched = coinMetas.map((cm) => {
         const match = data.find((c) => c.id === cm.id)
-        return (
-          match ?? {
-            id: cm.id,
-            symbol: cm.symbol,
-            name: cm.name,
-            current_price: 0,
-            price_change_percentage_24h: 0,
-            market_cap: 0,
-            market_cap_rank: null,
-            total_volume: 0,
-            high_24h: 0,
-            low_24h: 0,
-          }
-        )
+        if (match) {
+          return { ...match, symbol: cm.symbol }
+        }
+        return {
+          id: cm.id,
+          symbol: cm.symbol,
+          name: cm.name,
+          current_price: 0,
+          price_change_percentage_24h: 0,
+          market_cap: 0,
+          market_cap_rank: null,
+          total_volume: 0,
+          high_24h: 0,
+          low_24h: 0,
+        }
       })
       setCoins(enriched)
       setError(null)

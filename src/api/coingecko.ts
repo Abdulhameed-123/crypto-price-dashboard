@@ -114,3 +114,15 @@ export async function searchCoins(query: string, signal?: AbortSignal): Promise<
   const data = await fetchJson<{ coins: SearchResult[] }>(url, 1, signal)
   return data.coins.slice(0, 10)
 }
+
+export async function fetchGlobalStats(signal?: AbortSignal) {
+  const url = `${BASE_URL}/global`
+  return fetchJson<{
+    data: {
+      total_market_cap: { usd: number }
+      total_volume: { usd: number }
+      btc_dominance: number
+      market_cap_change_percentage_24h_usd: number
+    }
+  }>(url, 2, signal)
+}
