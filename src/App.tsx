@@ -9,6 +9,7 @@ import { AlertBadge } from './components/AlertBadge'
 import { SearchBar } from './components/SearchBar'
 import { PortfolioInput } from './components/PortfolioInput'
 import { PortfolioSummary } from './components/PortfolioSummary'
+import { Footer } from './components/Footer'
 import { usePrices } from './hooks/usePrices'
 import { useChartData } from './hooks/useChartData'
 import { useWatchlist } from './hooks/useWatchlist'
@@ -335,6 +336,8 @@ function App() {
           onSubmit={handleSetAlert}
         />
       )}
+
+      <Footer />
     </div>
   )
 }
