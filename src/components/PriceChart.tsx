@@ -230,76 +230,70 @@ function PriceChartInner({ data, candleData, loading, error, days, chartType, on
 
   return (
     <div className="bg-crypto-surface border border-crypto-border rounded-xl p-4 sm:p-5">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
-        <div className="flex items-center gap-3">
-          <div>
-            <h3 className="text-sm font-semibold text-white">
-              {symbol} / USD
-            </h3>
-            {stats && (
-              <div className="flex items-center gap-3 mt-1 text-xs text-crypto-text-muted flex-wrap">
-                <span>
-                  O <span className="text-white font-medium">${stats.open.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
-                </span>
-                <span>
-                  H <span className="text-crypto-green font-medium">${stats.high.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
-                </span>
-                <span>
-                  L <span className="text-crypto-red font-medium">${stats.low.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
-                </span>
-                <span className={stats.change >= 0 ? 'text-crypto-green' : 'text-crypto-red'}>
-                  {stats.change >= 0 ? '▲' : '▼'} {Math.abs(stats.changePercent).toFixed(2)}%
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 w-full sm:w-auto">
+      <div className="mb-4 space-y-2">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-white">{symbol} / USD</h3>
           <div className="flex bg-crypto-bg rounded-lg p-0.5 shrink-0">
             <button
               onClick={() => onChartTypeChange('line')}
-              className={`px-2 py-1 text-[11px] sm:text-xs font-medium rounded-md transition-colors ${
+              className={`px-2 py-1 text-xs font-medium rounded-md transition-colors ${
                 chartType === 'line'
                   ? 'bg-crypto-accent text-white'
                   : 'text-crypto-text-muted hover:text-white'
               }`}
               title="Line chart"
             >
-              <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M3 3v18h18M7 16l4-4 4 4 5-5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
             <button
               onClick={() => onChartTypeChange('candle')}
-              className={`px-2 py-1 text-[11px] sm:text-xs font-medium rounded-md transition-colors ${
+              className={`px-2 py-1 text-xs font-medium rounded-md transition-colors ${
                 chartType === 'candle'
                   ? 'bg-crypto-accent text-white'
                   : 'text-crypto-text-muted hover:text-white'
               }`}
               title="Candlestick chart"
             >
-              <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="4" y="6" width="3" height="12" rx="0.5" />
                 <rect x="10" y="3" width="3" height="18" rx="0.5" />
                 <rect x="16" y="8" width="3" height="8" rx="0.5" />
               </svg>
             </button>
           </div>
-          <div className="flex flex-wrap gap-1">
-            {TIME_RANGES.map((tr) => (
-              <button
-                key={tr.value}
-                onClick={() => onDaysChange(tr.value)}
-                className={`px-1.5 sm:px-2.5 py-1 text-[11px] sm:text-xs font-medium rounded-md transition-colors ${
-                  days === tr.value
-                    ? 'bg-crypto-accent text-white'
-                    : 'bg-crypto-bg text-crypto-text-muted hover:text-white hover:bg-crypto-border'
-                }`}
-              >
-                {tr.label}
-              </button>
-            ))}
+        </div>
+        {stats && (
+          <div className="flex items-center gap-2 sm:gap-3 text-xs text-crypto-text-muted flex-wrap">
+            <span>
+              O <span className="text-white font-medium">${stats.open.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+            </span>
+            <span>
+              H <span className="text-crypto-green font-medium">${stats.high.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+            </span>
+            <span>
+              L <span className="text-crypto-red font-medium">${stats.low.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+            </span>
+            <span className={stats.change >= 0 ? 'text-crypto-green' : 'text-crypto-red'}>
+              {stats.change >= 0 ? '▲' : '▼'} {Math.abs(stats.changePercent).toFixed(2)}%
+            </span>
           </div>
+        )}
+        <div className="flex gap-1 overflow-x-auto -mx-1 px-1 pb-1 scrollbar-none">
+          {TIME_RANGES.map((tr) => (
+            <button
+              key={tr.value}
+              onClick={() => onDaysChange(tr.value)}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
+                days === tr.value
+                  ? 'bg-crypto-accent text-white shadow-sm'
+                  : 'bg-crypto-bg text-crypto-text-muted hover:text-white hover:bg-crypto-border'
+              }`}
+            >
+              {tr.label}
+            </button>
+          ))}
         </div>
       </div>
 
