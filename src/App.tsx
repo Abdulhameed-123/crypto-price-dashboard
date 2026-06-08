@@ -11,6 +11,7 @@ import { PortfolioInput } from './components/PortfolioInput'
 import { PortfolioSummary } from './components/PortfolioSummary'
 import { Footer } from './components/Footer'
 import { GainersLosers } from './components/GainersLosers'
+import { FearGreedGauge } from './components/FearGreedGauge'
 import { usePrices } from './hooks/usePrices'
 import { useChartData } from './hooks/useChartData'
 import { useWatchlist } from './hooks/useWatchlist'
@@ -321,6 +322,7 @@ function App() {
               </button>
             </div>
             <div className="space-y-4">
+              <FearGreedGauge />
               <PortfolioSummary
                 totalValue={totalValue}
                 pnl24h={pnl24h}
