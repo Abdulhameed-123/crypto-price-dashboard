@@ -36,7 +36,7 @@ export function AssetDropdown({ coins, selectedId, onSelect, loading }: AssetDro
         ) : selected ? (
           <>
             <img
-              src={`https://assets.coingecko.com/coins/images/1/small/${selected.id}.png`}
+              src={selected.image ?? `https://ui-avatars.com/api/?name=${selected.symbol}&background=6366f1&color=fff&size=32`}
               alt=""
               className="w-8 h-8 rounded-full bg-crypto-bg"
               onError={(e) => {
@@ -87,7 +87,7 @@ export function AssetDropdown({ coins, selectedId, onSelect, loading }: AssetDro
                 }`}
               >
                 <img
-                  src={`https://assets.coingecko.com/coins/images/1/small/${coin.id}.png`}
+                  src={coin.image ?? `https://ui-avatars.com/api/?name=${coin.symbol}&background=6366f1&color=fff&size=28`}
                   alt=""
                   className="w-7 h-7 rounded-full bg-crypto-bg shrink-0"
                   onError={(e) => {

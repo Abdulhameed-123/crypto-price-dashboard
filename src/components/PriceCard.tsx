@@ -31,7 +31,7 @@ function PriceCardInner({ coin, isWatched, isCustom, onToggleWatch, onSelect, on
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2.5">
           <img
-            src={`https://assets.coingecko.com/coins/images/1/small/${coin.id}.png`}
+            src={coin.image ?? `https://ui-avatars.com/api/?name=${coin.symbol}&background=6366f1&color=fff&size=32`}
             alt={coin.name}
             className="w-8 h-8 rounded-full bg-crypto-bg"
             loading="lazy"

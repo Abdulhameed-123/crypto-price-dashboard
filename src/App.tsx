@@ -187,7 +187,7 @@ function App() {
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
                     <img
-                      src={`https://assets.coingecko.com/coins/images/1/small/${selectedCoin.id}.png`}
+                      src={selectedCoin.image ?? `https://ui-avatars.com/api/?name=${selectedCoin.symbol}&background=6366f1&color=fff&size=40`}
                       alt=""
                       className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-crypto-bg shrink-0"
                       onError={(e) => {
