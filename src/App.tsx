@@ -18,7 +18,7 @@ import { useCustomCoins } from './hooks/useCustomCoins'
 import { usePortfolio } from './hooks/usePortfolio'
 import { useGlobalStats } from './hooks/useGlobalStats'
 import { TRACKED_COINS } from './constants/coins'
-import type { TimeRange } from './types'
+import type { TimeRange, ChartType } from './types'
 
 function App() {
   const { customCoins, add: addCustom } = useCustomCoins()
@@ -40,11 +40,16 @@ function App() {
   const { setHolding, getHolding, hasHoldings, totalValue, pnl24h, pnlPercent, allocations } = usePortfolio(coins)
 
   const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [days, setDays] = useState<TimeRange>('7')
+  const [days, setDays] = useState<TimeRange>('0.04167')
   const [alertCoinId, setAlertCoinId] = useState<string | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
-  const { chartData, loading: chartLoading, error: chartError } = useChartData(selectedId, days)
+  const [chartType, setChartType] = useState<ChartType>('line')
+  const { chartData, candleData, loading: chartLoading, error: chartError } = useChartData(selectedId, days, chartType)
+  const handleDaysChange = useCallback((d: TimeRange) => {
+    setDays(d)
+    if (d !== '1' && d !== 'max') setChartType('line')
+  }, [])
 
   const selectedCoin = useMemo(
     () => coins.find((c) => c.id === selectedId) ?? null,
@@ -271,10 +276,13 @@ function App() {
 
             <PriceChart
               data={chartData}
+              candleData={candleData}
               loading={chartLoading}
               error={chartError}
               days={days}
-              onDaysChange={setDays}
+              chartType={chartType}
+              onDaysChange={handleDaysChange}
+              onChartTypeChange={setChartType}
               symbol={selectedCoin?.symbol ?? ''}
               onRetry={handleChartRetry}
             />

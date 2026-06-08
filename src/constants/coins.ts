@@ -14,8 +14,10 @@ export const TRACKED_COINS = [
 ]
 
 export const TIME_RANGES = [
-  { value: '1' as const, label: '24H' },
-  { value: '7' as const, label: '7D' },
-  { value: '30' as const, label: '1M' },
-  { value: '365' as const, label: '1Y' },
+  { value: '0.01042' as const, label: '15m' },
+  { value: '0.02083' as const, label: '30m' },
+  { value: '0.04167' as const, label: '1H' },
+  { value: '0.16667' as const, label: '4H' },
+  { value: '1' as const, label: '1D' },
+  { value: 'max' as const, label: 'ALL' },
 ]

@@ -1,33 +1,40 @@
 import { useState, useEffect, useRef } from 'react'
-import type { TimeRange } from '../types'
-import { fetchPriceHistory } from '../api/coingecko'
+import type { TimeRange, ChartType, OhlcData } from '../types'
+import { fetchPriceHistory, fetchOhlcHistory } from '../api/coingecko'
 
 interface ChartPoint {
   time: number
   price: number
 }
 
-const cache = new Map<string, ChartPoint[]>()
+const priceCache = new Map<string, ChartPoint[]>()
+const ohlcCache = new Map<string, OhlcData[]>()
 
-export function useChartData(coinId: string | null, days: TimeRange) {
-  const [data, setData] = useState<ChartPoint[]>([])
+function sampleData<T>(data: T[], maxPoints: number): T[] {
+  if (data.length <= maxPoints) return data
+  const step = Math.ceil(data.length / maxPoints)
+  return data.filter((_, i) => i % step === 0)
+}
+
+const PRIMARY_MAX = 800
+const SECONDARY_MAX = 400
+
+export function useChartData(coinId: string | null, days: TimeRange, chartType: ChartType) {
+  const [lineData, setLineData] = useState<ChartPoint[]>([])
+  const [candleData, setCandleData] = useState<OhlcData[]>([])
+  const [lineError, setLineError] = useState<string | null>(null)
+  const [candleError, setCandleError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const abortRef = useRef<AbortController | null>(null)
+
+  const error = chartType === 'line' ? lineError : candleError
 
   useEffect(() => {
     if (!coinId) {
-      setData([])
-      setError(null)
-      return
-    }
-
-    const cacheKey = `${coinId}-${days}`
-    const cached = cache.get(cacheKey)
-    if (cached) {
-      setData(cached)
-      setLoading(false)
-      setError(null)
+      setLineData([])
+      setCandleData([])
+      setLineError(null)
+      setCandleError(null)
       return
     }
 
@@ -37,36 +44,70 @@ export function useChartData(coinId: string | null, days: TimeRange) {
 
     let cancelled = false
     setLoading(true)
-    setError(null)
+    setLineError(null)
+    setCandleError(null)
+    if (chartType === 'line') setCandleData([])
+    else setLineData([])
 
-    fetchPriceHistory(coinId, days, controller.signal)
-      .then((history) => {
+    const loadLine = async () => {
+      const cacheKey = `${coinId}-${days}-line`
+      const cached = priceCache.get(cacheKey)
+      if (cached) {
+        setLineData(cached)
+        return
+      }
+
+      try {
+        const history = await fetchPriceHistory(coinId, days, controller.signal)
         if (cancelled || controller.signal.aborted) return
         const points = history.prices.map(([time, price]) => ({ time, price }))
-        cache.set(cacheKey, points)
-        if (points.length > 1000) {
-          const sampled = points.filter((_, i) => i % Math.ceil(points.length / 500) === 0)
-          cache.set(cacheKey, sampled)
-          setData(sampled)
-        } else {
-          setData(points)
-        }
-      })
-      .catch((err) => {
+        const sampled = sampleData(points, PRIMARY_MAX)
+        priceCache.set(cacheKey, sampled)
+        setLineData(sampled)
+      } catch (err) {
         if (cancelled || controller.signal.aborted) return
         if (err instanceof Error && err.message.includes('abort')) return
-        setError(err instanceof Error ? err.message : 'Failed to load chart')
-        setData([])
-      })
-      .finally(() => {
-        if (!cancelled && !controller.signal.aborted) setLoading(false)
-      })
+        setLineError(err instanceof Error ? err.message : 'Failed to load chart')
+      }
+    }
+
+    const loadCandle = async () => {
+      const cacheKey = `${coinId}-${days}-candle`
+      const cached = ohlcCache.get(cacheKey)
+      if (cached) {
+        setCandleData(cached)
+        return
+      }
+
+      try {
+        const raw = await fetchOhlcHistory(coinId, days, controller.signal)
+        if (cancelled || controller.signal.aborted) return
+        const candles: OhlcData[] = raw.map(([time, open, high, low, close]) => ({
+          time, open, high, low, close,
+        }))
+        const sampled = sampleData(candles, SECONDARY_MAX)
+        ohlcCache.set(cacheKey, sampled)
+        setCandleData(sampled)
+      } catch (err) {
+        if (cancelled || controller.signal.aborted) return
+        if (err instanceof Error && err.message.includes('abort')) return
+        setCandleError(err instanceof Error ? err.message : 'Failed to load chart')
+      }
+    }
+
+    const primary = chartType === 'line' ? loadLine() : loadCandle()
+    const secondary = chartType === 'line' ? loadCandle() : loadLine()
+
+    primary.finally(() => {
+      if (!cancelled && !controller.signal.aborted) setLoading(false)
+    })
+    secondary.catch(() => {})
 
     return () => {
       cancelled = true
       controller.abort()
     }
-  }, [coinId, days])
+  }, [coinId, days, chartType])
 
-  return { chartData: data, loading, error }
+  return { chartData: lineData, candleData, loading, error }
 }

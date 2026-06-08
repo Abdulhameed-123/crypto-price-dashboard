@@ -30,6 +30,14 @@ export interface PriceHistory {
   prices: [number, number][]
 }
 
+export interface OhlcData {
+  time: number
+  open: number
+  high: number
+  low: number
+  close: number
+}
+
 export interface Alert {
   coinId: string
   targetPrice: number
@@ -50,4 +58,5 @@ export interface Allocation {
   color: string
 }
 
-export type TimeRange = '1' | '7' | '30' | '365'
+export type TimeRange = '0.01042' | '0.02083' | '0.04167' | '0.16667' | '1' | 'max'
+export type ChartType = 'line' | 'candle'

@@ -6,10 +6,12 @@ const TIMEOUT_MS = 12_000
 const RETRY_BASE_MS = 1_000
 
 const DAYS_MAP: Record<TimeRange, string> = {
+  '0.01042': '0.01042',
+  '0.02083': '0.02083',
+  '0.04167': '0.04167',
+  '0.16667': '0.16667',
   '1': '1',
-  '7': '7',
-  '30': '30',
-  '365': '365',
+  'max': '365',
 }
 
 class ApiError extends Error {
@@ -26,11 +28,9 @@ class ApiError extends Error {
 async function fetchWithTimeout(url: string, signal?: AbortSignal): Promise<Response> {
   const controller = new AbortController()
   const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS)
-
   const combinedSignal = signal
     ? combineAbortSignals(signal, controller.signal)
     : controller.signal
-
   try {
     const res = await fetch(url, {
       headers: { Accept: 'application/json' },
@@ -58,7 +58,6 @@ async function fetchJson<T>(url: string, retries = MAX_RETRIES, signal?: AbortSi
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       const res = await fetchWithTimeout(url, signal)
-
       if (res.status === 429) {
         const retryAfter = parseInt(res.headers.get('Retry-After') || '5', 10)
         if (attempt < retries) {
@@ -67,16 +66,10 @@ async function fetchJson<T>(url: string, retries = MAX_RETRIES, signal?: AbortSi
         }
         throw new ApiError('Rate limited. Retrying...', 429, true)
       }
-
       if (!res.ok) {
         const retryable = res.status >= 500 || res.status === 0
-        throw new ApiError(
-          `API error: ${res.status} ${res.statusText}`,
-          res.status,
-          retryable
-        )
+        throw new ApiError(`API error: ${res.status} ${res.statusText}`, res.status, retryable)
       }
-
       return res.json()
     } catch (err) {
       if (err instanceof ApiError && !err.retryable) throw err
@@ -107,6 +100,11 @@ export async function fetchCoins(ids: string[], signal?: AbortSignal): Promise<C
 export async function fetchPriceHistory(id: string, days: TimeRange, signal?: AbortSignal): Promise<PriceHistory> {
   const url = `${BASE_URL}/coins/${id}/market_chart?vs_currency=usd&days=${DAYS_MAP[days]}`
   return fetchJson<PriceHistory>(url, MAX_RETRIES, signal)
+}
+
+export async function fetchOhlcHistory(id: string, days: TimeRange, signal?: AbortSignal): Promise<[number, number, number, number, number][]> {
+  const url = `${BASE_URL}/coins/${id}/ohlc?vs_currency=usd&days=${DAYS_MAP[days]}`
+  return fetchJson<[number, number, number, number, number][]>(url, MAX_RETRIES, signal)
 }
 
 export async function searchCoins(query: string, signal?: AbortSignal): Promise<SearchResult[]> {
