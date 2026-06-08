@@ -10,6 +10,7 @@ import { SearchBar } from './components/SearchBar'
 import { PortfolioInput } from './components/PortfolioInput'
 import { PortfolioSummary } from './components/PortfolioSummary'
 import { Footer } from './components/Footer'
+import { GainersLosers } from './components/GainersLosers'
 import { usePrices } from './hooks/usePrices'
 import { useChartData } from './hooks/useChartData'
 import { useWatchlist } from './hooks/useWatchlist'
@@ -263,6 +264,8 @@ function App() {
                 </div>
               </div>
             )}
+
+            <GainersLosers coins={coins} loading={loading} onSelect={setSelectedId} />
 
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-3 text-xs text-crypto-text-muted">
