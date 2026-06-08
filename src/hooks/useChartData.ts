@@ -95,26 +95,7 @@ export function useChartData(coinId: string | null, days: TimeRange, chartType: 
       } catch (err) {
         if (cancelled || controller.signal.aborted) return
         if (err instanceof Error && err.message.includes('abort')) return
-        try {
-          const history = await fetchPriceHistory(coinId, days, controller.signal)
-          if (cancelled || controller.signal.aborted) return
-          const points = history.prices
-          const candles: OhlcData[] = []
-          for (let i = 0; i < points.length - 1; i++) {
-            const [time, open] = points[i]
-            const [, close] = points[i + 1]
-            const high = Math.max(open, close)
-            const low = Math.min(open, close)
-            candles.push({ time, open, high, low, close })
-          }
-          const sampled = sampleData(candles, SECONDARY_MAX)
-          ohlcCache.set(cacheKey, sampled)
-          setCandleData(sampled)
-        } catch (err2) {
-          if (cancelled || controller.signal.aborted) return
-          if (err2 instanceof Error && err2.message.includes('abort')) return
-          setCandleError(err instanceof Error ? err.message : 'Failed to load chart')
-        }
+        setCandleError(err instanceof Error ? err.message : 'Failed to load chart')
       }
     }
 
