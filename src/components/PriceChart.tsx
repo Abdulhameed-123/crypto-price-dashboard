@@ -297,7 +297,7 @@ function PriceChartInner({ data, candleData, loading, error, days, chartType, on
         </div>
       </div>
 
-      {error ? (
+      {error && !chartData.length ? (
         <div className="flex flex-col items-center justify-center h-[350px] text-crypto-red text-sm gap-3">
           <p>{error}</p>
           <button
@@ -307,152 +307,164 @@ function PriceChartInner({ data, candleData, loading, error, days, chartType, on
             Retry
           </button>
         </div>
-      ) : loading ? (
+      ) : loading && chartData.length === 0 ? (
         <ChartSkeleton />
       ) : chartData.length === 0 ? (
         <ChartEmpty symbol={symbol} />
-      ) : isLine ? (
-        <>
-          <ResponsiveContainer width="100%" height={320}>
-            <AreaChart
-              data={data}
-              margin={{ top: 5, right: 5, left: 0, bottom: 0 }}
-            >
-              <defs>
-                <linearGradient id={`gradient-${symbol}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={color} stopOpacity={0.3} />
-                  <stop offset="100%" stopColor={color} stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#2a2e42" vertical={false} />
-              <XAxis
-                dataKey="time"
-                tickFormatter={(t) => formatTime(t, days)}
-                stroke="#94a3b8"
-                tick={{ fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
-                minTickGap={50}
-              />
-              <YAxis
-                domain={['dataMin - 50', 'dataMax + 50']}
-                tickFormatter={(v) => '$' + v.toLocaleString()}
-                stroke="#94a3b8"
-                tick={{ fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
-                width={75}
-              />
-              <Tooltip content={<LineTooltip />} cursor={<CustomCursor />} />
-              <ReferenceLine
-                y={data[data.length - 1]?.price}
-                stroke={color}
-                strokeDasharray="6 3"
-                strokeWidth={1}
-                strokeOpacity={0.5}
-                label={{
-                  value: `$${data[data.length - 1]?.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
-                  fill: color,
-                  fontSize: 11,
-                  position: 'right',
-                }}
-              />
-              <Area
-                type="monotone"
-                dataKey="price"
-                stroke={color}
-                strokeWidth={2}
-                fill={`url(#gradient-${symbol})`}
-                animationBegin={0}
-                animationDuration={600}
-                activeDot={{ r: 4, strokeWidth: 0, fill: color }}
-              />
-              <Brush
-                dataKey="time"
-                height={30}
-                stroke="#2a2e42"
-                fill="#1a1d2e"
-                travellerWidth={8}
-                gap={5}
-                tickFormatter={(t: number) => formatTime(t, days)}
-                style={{ fontSize: 10, color: '#94a3b8' }}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-          <div className="flex items-center justify-between mt-3 text-[11px] text-crypto-text-muted">
-            <span className="flex items-center gap-1">
-              <span className="w-2 h-[1px] bg-crypto-accent inline-block" />
-              Hover to crosshair · Drag to zoom
-            </span>
-            <span>{data.length.toLocaleString()} data points</span>
-          </div>
-        </>
       ) : (
-        <>
-          <ResponsiveContainer width="100%" height={320}>
-            <BarChart
-              data={candleData}
-              margin={{ top: 5, right: 5, left: 0, bottom: 0 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="#2a2e42" vertical={false} />
-              <XAxis
-                dataKey="time"
-                tickFormatter={(t) => formatTime(t, days)}
-                stroke="#94a3b8"
-                tick={{ fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
-                minTickGap={50}
-              />
-              <YAxis
-                domain={[candleDomain[0], candleDomain[1]]}
-                tickFormatter={(v) => '$' + v.toLocaleString()}
-                stroke="#94a3b8"
-                tick={{ fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
-                width={75}
-              />
-              <Tooltip content={<CandleTooltip />} cursor={<CustomCursor />} />
-              <ReferenceLine
-                y={candleData[candleData.length - 1]?.close}
-                stroke={color}
-                strokeDasharray="6 3"
-                strokeWidth={1}
-                strokeOpacity={0.5}
-                label={{
-                  value: `$${candleData[candleData.length - 1]?.close.toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
-                  fill: color,
-                  fontSize: 11,
-                  position: 'right',
-                }}
-              />
-              <Bar
-                dataKey="close"
-                shape={<CandleShape yMin={candleDomain[0]} />}
-                isAnimationActive={false}
-              />
-              <Brush
-                dataKey="time"
-                height={30}
-                stroke="#2a2e42"
-                fill="#1a1d2e"
-                travellerWidth={8}
-                gap={5}
-                tickFormatter={(t: number) => formatTime(t, days)}
-                style={{ fontSize: 10, color: '#94a3b8' }}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-          <div className="flex items-center justify-between mt-3 text-[11px] text-crypto-text-muted">
-            <span className="flex items-center gap-1">
-              <span className="w-1.5 h-1.5 bg-crypto-green inline-block rounded-sm" />
-              <span className="w-1.5 h-1.5 bg-crypto-red inline-block rounded-sm ml-1" />
-              <span className="ml-1">Hover to crosshair · Drag to zoom</span>
-            </span>
-            <span>{candleData.length.toLocaleString()} candles</span>
-          </div>
-        </>
+        <div className="relative">
+          {loading && (
+            <div className="absolute inset-0 z-10 flex items-start justify-center pt-16 pointer-events-none">
+              <span className="flex items-center gap-2 px-3 py-1.5 bg-crypto-surface/80 backdrop-blur-sm border border-crypto-border rounded-lg text-xs text-crypto-text-muted">
+                <span className="w-2 h-2 rounded-full bg-crypto-accent animate-ping" />
+                Loading...
+              </span>
+            </div>
+          )}
+          {isLine ? (
+            <>
+              <ResponsiveContainer width="100%" height={320}>
+                <AreaChart
+                  data={data}
+                  margin={{ top: 5, right: 5, left: 0, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient id={`gradient-${symbol}`} x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={color} stopOpacity={0.3} />
+                      <stop offset="100%" stopColor={color} stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#2a2e42" vertical={false} />
+                  <XAxis
+                    dataKey="time"
+                    tickFormatter={(t) => formatTime(t, days)}
+                    stroke="#94a3b8"
+                    tick={{ fontSize: 11 }}
+                    tickLine={false}
+                    axisLine={false}
+                    minTickGap={50}
+                  />
+                  <YAxis
+                    domain={['dataMin - 50', 'dataMax + 50']}
+                    tickFormatter={(v) => '$' + v.toLocaleString()}
+                    stroke="#94a3b8"
+                    tick={{ fontSize: 11 }}
+                    tickLine={false}
+                    axisLine={false}
+                    width={75}
+                  />
+                  <Tooltip content={<LineTooltip />} cursor={<CustomCursor />} />
+                  <ReferenceLine
+                    y={data[data.length - 1]?.price}
+                    stroke={color}
+                    strokeDasharray="6 3"
+                    strokeWidth={1}
+                    strokeOpacity={0.5}
+                    label={{
+                      value: `$${data[data.length - 1]?.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
+                      fill: color,
+                      fontSize: 11,
+                      position: 'right',
+                    }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="price"
+                    stroke={color}
+                    strokeWidth={2}
+                    fill={`url(#gradient-${symbol})`}
+                    animationBegin={0}
+                    animationDuration={600}
+                    activeDot={{ r: 4, strokeWidth: 0, fill: color }}
+                  />
+                  <Brush
+                    dataKey="time"
+                    height={30}
+                    stroke="#2a2e42"
+                    fill="#1a1d2e"
+                    travellerWidth={8}
+                    gap={5}
+                    tickFormatter={(t: number) => formatTime(t, days)}
+                    style={{ fontSize: 10, color: '#94a3b8' }}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+              <div className="flex items-center justify-between mt-3 text-[11px] text-crypto-text-muted">
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-[1px] bg-crypto-accent inline-block" />
+                  Hover to crosshair · Drag to zoom
+                </span>
+                <span>{data.length.toLocaleString()} data points</span>
+              </div>
+            </>
+          ) : (
+            <>
+              <ResponsiveContainer width="100%" height={320}>
+                <BarChart
+                  data={candleData}
+                  margin={{ top: 5, right: 5, left: 0, bottom: 0 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#2a2e42" vertical={false} />
+                  <XAxis
+                    dataKey="time"
+                    tickFormatter={(t) => formatTime(t, days)}
+                    stroke="#94a3b8"
+                    tick={{ fontSize: 11 }}
+                    tickLine={false}
+                    axisLine={false}
+                    minTickGap={50}
+                  />
+                  <YAxis
+                    domain={[candleDomain[0], candleDomain[1]]}
+                    tickFormatter={(v) => '$' + v.toLocaleString()}
+                    stroke="#94a3b8"
+                    tick={{ fontSize: 11 }}
+                    tickLine={false}
+                    axisLine={false}
+                    width={75}
+                  />
+                  <Tooltip content={<CandleTooltip />} cursor={<CustomCursor />} />
+                  <ReferenceLine
+                    y={candleData[candleData.length - 1]?.close}
+                    stroke={color}
+                    strokeDasharray="6 3"
+                    strokeWidth={1}
+                    strokeOpacity={0.5}
+                    label={{
+                      value: `$${candleData[candleData.length - 1]?.close.toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
+                      fill: color,
+                      fontSize: 11,
+                      position: 'right',
+                    }}
+                  />
+                  <Bar
+                    dataKey="close"
+                    shape={<CandleShape yMin={candleDomain[0]} />}
+                    isAnimationActive={false}
+                  />
+                  <Brush
+                    dataKey="time"
+                    height={30}
+                    stroke="#2a2e42"
+                    fill="#1a1d2e"
+                    travellerWidth={8}
+                    gap={5}
+                    tickFormatter={(t: number) => formatTime(t, days)}
+                    style={{ fontSize: 10, color: '#94a3b8' }}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+              <div className="flex items-center justify-between mt-3 text-[11px] text-crypto-text-muted">
+                <span className="flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-crypto-green inline-block rounded-sm" />
+                  <span className="w-1.5 h-1.5 bg-crypto-red inline-block rounded-sm ml-1" />
+                  <span className="ml-1">Hover to crosshair · Drag to zoom</span>
+                </span>
+                <span>{candleData.length.toLocaleString()} candles</span>
+              </div>
+            </>
+          )}
+        </div>
       )}
     </div>
   )
