@@ -49,6 +49,10 @@ export function useChartData(coinId: string | null, days: TimeRange, chartType: 
     if (chartType === 'line') setCandleData([])
     else setLineData([])
 
+    const safetyTimer = setTimeout(() => {
+      if (!cancelled) setLoading(false)
+    }, 15_000)
+
     const loadLine = async () => {
       const cacheKey = `${coinId}-${days}-line`
       const cached = priceCache.get(cacheKey)
@@ -98,10 +102,13 @@ export function useChartData(coinId: string | null, days: TimeRange, chartType: 
     const primary = chartType === 'line' ? loadLine() : loadCandle()
     const secondary = chartType === 'line' ? loadCandle() : loadLine()
 
-    primary.finally(() => {
+    const done = () => {
+      clearTimeout(safetyTimer)
       if (!cancelled && !controller.signal.aborted) setLoading(false)
-    })
-    secondary.catch(() => {})
+    }
+
+    primary.finally(done)
+    secondary.catch(() => {}).finally(done)
 
     return () => {
       cancelled = true

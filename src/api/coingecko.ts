@@ -2,7 +2,7 @@ import type { Coin, PriceHistory, SearchResult, TimeRange } from '../types'
 
 const BASE_URL = import.meta.env.DEV ? '/api' : 'https://api.coingecko.com/api/v3'
 const MAX_RETRIES = 3
-const TIMEOUT_MS = 12_000
+const TIMEOUT_MS = 20_000
 const RETRY_BASE_MS = 1_000
 
 const DAYS_MAP: Record<TimeRange, string> = {
