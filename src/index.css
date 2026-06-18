@@ -1,16 +1,42 @@
 @import "tailwindcss";
 
 @theme {
-  --color-crypto-bg: #0f1118;
-  --color-crypto-surface: #1a1d2e;
-  --color-crypto-surface-hover: #232738;
-  --color-crypto-border: #2a2e42;
-  --color-crypto-green: #22c55e;
-  --color-crypto-red: #ef4444;
-  --color-crypto-gold: #f59e0b;
-  --color-crypto-accent: #6366f1;
-  --color-crypto-text: #e2e8f0;
-  --color-crypto-text-muted: #94a3b8;
+  --color-crypto-bg: var(--crypto-bg);
+  --color-crypto-surface: var(--crypto-surface);
+  --color-crypto-surface-hover: var(--crypto-surface-hover);
+  --color-crypto-border: var(--crypto-border);
+  --color-crypto-green: var(--crypto-green);
+  --color-crypto-red: var(--crypto-red);
+  --color-crypto-gold: var(--crypto-gold);
+  --color-crypto-accent: var(--crypto-accent);
+  --color-crypto-text: var(--crypto-text);
+  --color-crypto-text-muted: var(--crypto-text-muted);
+}
+
+:root {
+  --crypto-bg: #0f1118;
+  --crypto-surface: #1a1d2e;
+  --crypto-surface-hover: #232738;
+  --crypto-border: #2a2e42;
+  --crypto-green: #22c55e;
+  --crypto-red: #ef4444;
+  --crypto-gold: #f59e0b;
+  --crypto-accent: #6366f1;
+  --crypto-text: #e2e8f0;
+  --crypto-text-muted: #94a3b8;
+}
+
+[data-theme="light"] {
+  --crypto-bg: #f1f5f9;
+  --crypto-surface: #ffffff;
+  --crypto-surface-hover: #e2e8f0;
+  --crypto-border: #cbd5e1;
+  --crypto-green: #16a34a;
+  --crypto-red: #dc2626;
+  --crypto-gold: #d97706;
+  --crypto-accent: #6366f1;
+  --crypto-text: #0f172a;
+  --crypto-text-muted: #64748b;
 }
 
 body {

@@ -1,3 +1,5 @@
+import { ThemeToggle } from './ThemeToggle'
+
 interface HeaderProps {
   alertCount: number
   lastUpdated: string | null
@@ -50,7 +52,8 @@ export function Header({
         <h1 className="text-base sm:text-xl font-bold text-white truncate">Crypto Dashboard</h1>
       </div>
 
-      <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-crypto-text-muted">
+      <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-crypto-text-muted">
+        <ThemeToggle />
         {portfolioValue > 0 && (
           <span className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-crypto-surface rounded-lg">
             <span className="text-xs text-crypto-text-muted">Portfolio</span>
