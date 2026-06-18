@@ -28,7 +28,7 @@ export function Header({
   const isPnlUp = portfolioPnl >= 0
 
   return (
-    <header className="flex items-center justify-between px-3 sm:px-6 py-3 sm:py-4 border-b border-crypto-border">
+    <header className="flex items-center justify-between px-3 sm:px-6 py-3 sm:py-4 border-b border-crypto-border bg-crypto-bg/80 backdrop-blur-sm sticky top-0 z-20">
       <div className="flex items-center gap-2 sm:gap-3">
         <button
           onClick={onToggleSidebar}

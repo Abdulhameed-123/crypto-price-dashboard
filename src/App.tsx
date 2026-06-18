@@ -294,16 +294,16 @@ function App() {
 
           {sidebarOpen && (
             <div
-              className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 lg:hidden"
               onClick={() => setSidebarOpen(false)}
             />
           )}
 
           <aside
             className={`
-              fixed lg:sticky top-0 right-0 h-full lg:h-auto z-40 lg:z-auto
-              w-72 bg-crypto-bg lg:bg-transparent
-              border-l border-crypto-border lg:border-none
+              fixed lg:sticky top-0 h-full lg:h-auto z-40 lg:z-auto
+              w-72 bg-crypto-bg lg:bg-crypto-bg/60
+              border-l border-crypto-border lg:border-l lg:border-crypto-border
               shadow-2xl lg:shadow-none
               overflow-y-auto p-4 sm:p-0
               transition-transform duration-300 ease-in-out

@@ -14,29 +14,29 @@
 }
 
 :root {
-  --crypto-bg: #0f1118;
-  --crypto-surface: #1a1d2e;
-  --crypto-surface-hover: #232738;
-  --crypto-border: #2a2e42;
-  --crypto-green: #22c55e;
-  --crypto-red: #ef4444;
-  --crypto-gold: #f59e0b;
-  --crypto-accent: #6366f1;
-  --crypto-text: #e2e8f0;
-  --crypto-text-muted: #94a3b8;
+  --crypto-bg: #06070e;
+  --crypto-surface: #0e101e;
+  --crypto-surface-hover: #171a2a;
+  --crypto-border: #242843;
+  --crypto-green: #00f593;
+  --crypto-red: #ff2d55;
+  --crypto-gold: #ffcc00;
+  --crypto-accent: #7c3aed;
+  --crypto-text: #efeff5;
+  --crypto-text-muted: #72768a;
 }
 
 [data-theme="light"] {
-  --crypto-bg: #f1f5f9;
+  --crypto-bg: #f7f4ec;
   --crypto-surface: #ffffff;
-  --crypto-surface-hover: #e2e8f0;
-  --crypto-border: #cbd5e1;
-  --crypto-green: #16a34a;
-  --crypto-red: #dc2626;
-  --crypto-gold: #d97706;
-  --crypto-accent: #6366f1;
-  --crypto-text: #0f172a;
-  --crypto-text-muted: #64748b;
+  --crypto-surface-hover: #ede9e0;
+  --crypto-border: #cdc8bd;
+  --crypto-green: #0db85e;
+  --crypto-red: #e01335;
+  --crypto-gold: #e07b00;
+  --crypto-accent: #7c3aed;
+  --crypto-text: #0c0906;
+  --crypto-text-muted: #615b55;
 }
 
 body {
@@ -44,6 +44,27 @@ body {
   color: var(--color-crypto-text);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+:root body::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -20%, rgba(124, 58, 237, 0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(0, 245, 147, 0.04) 0%, transparent 50%);
+}
+
+[data-theme="light"] body::before {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% -10%, rgba(124, 58, 237, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 90%, rgba(13, 184, 94, 0.04) 0%, transparent 50%);
 }
 
 ::-webkit-scrollbar {
@@ -58,19 +79,19 @@ body {
 }
 
 @keyframes flash-green {
-  0% { background-color: rgba(34, 197, 94, 0.15); }
+  0% { background-color: color-mix(in srgb, var(--crypto-green) 20%, transparent); }
   100% { background-color: transparent; }
 }
 @keyframes flash-red {
-  0% { background-color: rgba(239, 68, 68, 0.15); }
+  0% { background-color: color-mix(in srgb, var(--crypto-red) 20%, transparent); }
   100% { background-color: transparent; }
 }
 @keyframes flash-text-green {
-  0% { color: #22c55e; }
+  0% { color: var(--crypto-green); }
   100% { color: inherit; }
 }
 @keyframes flash-text-red {
-  0% { color: #ef4444; }
+  0% { color: var(--crypto-red); }
   100% { color: inherit; }
 }
 @keyframes fade-in-up {
